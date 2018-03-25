@@ -14,7 +14,22 @@ static std::unordered_map<BanglaLetter, const char *> LetterMapping = {
     { BanglaLetter::Ch, u8"\u099B"},
     { BanglaLetter::j, u8"\u099C"},
     { BanglaLetter::J, u8"\u099D"},
-    { BanglaLetter::NG, u8"\u099E"}
+    { BanglaLetter::NG, u8"\u099E"},
+    { BanglaLetter::T, u8"\u099F"},
+    { BanglaLetter::Th, u8"\u09A0"},
+    { BanglaLetter::D, u8"\u09A1"},
+    { BanglaLetter::Dh, u8"\u09A2"},
+    { BanglaLetter::N, u8"\u09A3"},
+    { BanglaLetter::t, u8"\u09A4"},
+    { BanglaLetter::th, u8"\u09A5"},
+    { BanglaLetter::d, u8"\u09A6"},
+    { BanglaLetter::dh, u8"\u09A7"},
+    { BanglaLetter::n, u8"\u09A8"},
+    { BanglaLetter::p, u8"\u09AA"},
+    { BanglaLetter::f, u8"\u09AB"},
+    { BanglaLetter::b, u8"\u09AC"},
+    { BanglaLetter::bh, u8"\u09AD"},
+    { BanglaLetter::m, u8"\u09AE"}
 };
 
 static std::unordered_map<BanglaVowel, const char *> VowelprefixMapping = {
@@ -26,9 +41,9 @@ static std::unordered_map<BanglaVowel, const char *> VowelprefixMapping = {
     { BanglaVowel::U, u8"\u09C2"}
 };
 
-void BanglaElem::print() const {
-    std::cout << LetterMapping[letter_]
-              << VowelprefixMapping[vowelPrefix_];
+void BanglaElem::print(std::ostream & outputStream) const {
+    outputStream << LetterMapping[letter_]
+                 << VowelprefixMapping[vowelPrefix_];
 }
 
 static std::unordered_map<char, BanglaVowel> vowelConversions = {
@@ -46,15 +61,19 @@ static std::unordered_map<char, BanglaLetter> letterConversions = {
     {'k', BanglaLetter::k},
     {'K', BanglaLetter::K},
     {'g', BanglaLetter::g},
-    {'G', BanglaLetter::G}
-};
-
-static std::unordered_map<char, BanglaVowel> vowelPrefixConversions = {
-    {'A', BanglaVowel::A},
-    {'i', BanglaVowel::i},
-    {'I', BanglaVowel::I},
-    {'u', BanglaVowel::u},
-    {'U', BanglaVowel::U}
+    {'G', BanglaLetter::G},
+    {'c', BanglaLetter::ch},
+    {'C', BanglaLetter::Ch},
+    {'j', BanglaLetter::j},
+    {'J', BanglaLetter::J},
+    {'T', BanglaLetter::T},
+    {'D', BanglaLetter::D},
+    {'t', BanglaLetter::t},
+    {'d', BanglaLetter::d},
+    {'p', BanglaLetter::p},
+    {'f', BanglaLetter::f},
+    {'b', BanglaLetter::b},
+    {'m', BanglaLetter::m},
 };
 
 BanglaVowel BanglaUtf8::parse_vowel(std::istream & inputChars) const {
@@ -72,7 +91,7 @@ BanglaLetter BanglaUtf8::parse_letter(std::istream & inputChars) const {
 BanglaVowel BanglaUtf8::parse_vowel_prefix(std::istream & inputChars) const {
     char c;
     inputChars >> c;
-    return vowelPrefixConversions[c];
+    return vowelConversions[c];
 }
 
 bool BanglaUtf8::is_vowel (const char c) const {
@@ -109,8 +128,8 @@ void BanglaUtf8::convert (std::istream & inputChars) {
     }
 }
 
-void BanglaUtf8::print () const {
+void BanglaUtf8::print (std::ostream& outputStream) const {
     for (auto & elem : elems_) {
-        elem.print();
+        elem.print(outputStream);
     }
 }

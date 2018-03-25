@@ -5,10 +5,10 @@
 
 int main () {
     BanglaUtf8 converter;
-    std::string input = "kaku kAk";
+    std::string input = "kAku mAmu";
     std::stringstream inputChars(input);
     converter.convert(inputChars);
-    converter.print();
+    converter.print(std::cout);
     std::cout << "\n";
     return 0;
 }

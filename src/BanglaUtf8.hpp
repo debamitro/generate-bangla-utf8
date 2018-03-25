@@ -9,8 +9,9 @@ enum class BanglaLetter {
     e, oi, o, ou,
     k, K, g, G, ng,
     ch, Ch, j, J, NG,
+    T, Th, D, Dh, N,
     t, th, d, dh, n,
-    T, Th, D, Dh, N
+    p, f, b, bh, m
 };
 
 enum class BanglaVowel {
@@ -25,7 +26,7 @@ public:
         vowelPrefix_(vowelPrefix) {}
     ~BanglaElem() = default;
 
-    void print () const;
+    void print (std::ostream & outputStream) const;
 private:
     BanglaLetter letter_;
     BanglaVowel vowelPrefix_;
@@ -37,7 +38,7 @@ public:
     ~BanglaUtf8() = default;
 
     void convert (std::istream & inputChars);
-    void print () const;
+    void print (std::ostream & outputStream) const;
 private:
     BanglaVowel parse_vowel(std::istream & inputChars) const;
     BanglaLetter parse_letter(std::istream & inputChars) const;
