@@ -6,7 +6,7 @@ all: ${BINDIR}/generate-bangla
 clean:
 	$(RM) -fr $(BINDIR)/generate-bangla *.o
 
-${BINDIR}/generate-bangla: main.o
+${BINDIR}/generate-bangla: main.o BanglaUtf8.o
 	$(CXX) -m32 $^ -o $@
 
 %.o: %.cpp
