@@ -4,6 +4,7 @@
 #include <vector>
 #include <istream>
 #include <sstream>
+#include <ctype.h>
 
 enum class BanglaLetter {
     a, A, i, I, u, U,
@@ -12,11 +13,6 @@ enum class BanglaLetter {
     ch, Ch, j, J, NG,
     t, th, d, dh, n,
     T, Th, D, Dh, N
-};
-
-enum class BanglaVowelPrefix {
-    A, i, I, u, U,
-    e, oi, o, ou
 };
 
 enum class BanglaVowel {
@@ -37,17 +33,18 @@ static std::unordered_map<BanglaLetter, const char *> LetterMapping = {
     { BanglaLetter::NG, u8"\u099E"}
 };
 
-static std::unordered_map<BanglaVowelPrefix, const char *> VowelprefixMapping = {
-    { BanglaVowelPrefix::A, u8"\u09BE"},
-    { BanglaVowelPrefix::i, u8"\u09BF"},
-    { BanglaVowelPrefix::I, u8"\u09C0"},
-    { BanglaVowelPrefix::u, u8"\u09C1"},
-    { BanglaVowelPrefix::U, u8"\u09C2"}
+static std::unordered_map<BanglaVowel, const char *> VowelprefixMapping = {
+    { BanglaVowel::a, ""},
+    { BanglaVowel::A, u8"\u09BE"},
+    { BanglaVowel::i, u8"\u09BF"},
+    { BanglaVowel::I, u8"\u09C0"},
+    { BanglaVowel::u, u8"\u09C1"},
+    { BanglaVowel::U, u8"\u09C2"}
 };
 
 class BanglaElem {
 public:
-    BanglaElem(BanglaLetter letter, BanglaVowelPrefix vowelPrefix) :
+    BanglaElem(BanglaLetter letter, BanglaVowel vowelPrefix) :
         letter_(letter),
         vowelPrefix_(vowelPrefix) {}
     ~BanglaElem() = default;
@@ -55,7 +52,7 @@ public:
     void print () const;
 private:
     BanglaLetter letter_;
-    BanglaVowelPrefix vowelPrefix_;
+    BanglaVowel vowelPrefix_;
 };
 
 void BanglaElem::print() const {
@@ -73,7 +70,7 @@ public:
 private:
     BanglaVowel parse_vowel(std::istream & inputChars) const;
     BanglaLetter parse_letter(std::istream & inputChars) const;
-    BanglaVowelPrefix parse_vowel_prefix(std::istream & inputChars) const;
+    BanglaVowel parse_vowel_prefix(std::istream & inputChars) const;
     bool is_vowel (char c) const;
     std::vector<BanglaElem> elems_;
 };
@@ -96,12 +93,12 @@ static std::unordered_map<char, BanglaLetter> letterConversions = {
     {'G', BanglaLetter::G}
 };
 
-static std::unordered_map<char, BanglaVowelPrefix> vowelPrefixConversions = {
-    {'A', BanglaVowelPrefix::A},
-    {'i', BanglaVowelPrefix::i},
-    {'I', BanglaVowelPrefix::I},
-    {'u', BanglaVowelPrefix::u},
-    {'U', BanglaVowelPrefix::U}
+static std::unordered_map<char, BanglaVowel> vowelPrefixConversions = {
+    {'A', BanglaVowel::A},
+    {'i', BanglaVowel::i},
+    {'I', BanglaVowel::I},
+    {'u', BanglaVowel::u},
+    {'U', BanglaVowel::U}
 };
 
 BanglaVowel EnglishToBangla::parse_vowel(std::istream & inputChars) const {
@@ -116,7 +113,7 @@ BanglaLetter EnglishToBangla::parse_letter(std::istream & inputChars) const {
     return letterConversions[c];
 }
 
-BanglaVowelPrefix EnglishToBangla::parse_vowel_prefix(std::istream & inputChars) const {
+BanglaVowel EnglishToBangla::parse_vowel_prefix(std::istream & inputChars) const {
     char c;
     inputChars >> c;
     return vowelPrefixConversions[c];
@@ -136,12 +133,21 @@ void EnglishToBangla::convert (std::istream & inputChars) {
             break;
         }
 
-        if (is_vowel(c)) {
+        if (isspace(c)) {
+            inputChars.get();
+            continue;
+        }
+        else if (is_vowel(c)) {
             BanglaVowel vowel = parse_vowel(inputChars);
         }
         else {
             BanglaLetter letter = parse_letter(inputChars);
-            BanglaVowelPrefix vowelPrefix = parse_vowel_prefix(inputChars);
+
+            const char c = inputChars.peek();
+            BanglaVowel vowelPrefix = BanglaVowel::a;
+            if (!inputChars.eof() && is_vowel(c)) {
+                vowelPrefix = parse_vowel_prefix(inputChars);
+            }
             elems_.emplace_back(BanglaElem(letter, vowelPrefix));
         }
     }
@@ -155,7 +161,7 @@ void EnglishToBangla::print () const {
 
 int main () {
     EnglishToBangla converter;
-    std::string input = "kAku";
+    std::string input = "kaku kAk";
     std::stringstream inputChars(input);
     converter.convert(inputChars);
     converter.print();
