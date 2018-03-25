@@ -2,6 +2,8 @@
 #include <fstream>
 #include <unordered_map>
 #include <vector>
+#include <istream>
+#include <sstream>
 
 enum class BanglaLetter {
     a, A, i, I, u, U,
@@ -66,12 +68,12 @@ public:
     EnglishToBangla() : elems_() {}
     ~EnglishToBangla() = default;
 
-    void convert (const char * inputChars);
+    void convert (std::istream & inputChars);
     void print () const;
 private:
-    BanglaVowel parse_vowel(const char *& inputChars) const;
-    BanglaLetter parse_letter(const char *& inputChars) const;
-    BanglaVowelPrefix parse_vowel_prefix(const char *& inputChars) const;
+    BanglaVowel parse_vowel(std::istream & inputChars) const;
+    BanglaLetter parse_letter(std::istream & inputChars) const;
+    BanglaVowelPrefix parse_vowel_prefix(std::istream & inputChars) const;
     bool is_vowel (char c) const;
     std::vector<BanglaElem> elems_;
 };
@@ -102,16 +104,22 @@ static std::unordered_map<char, BanglaVowelPrefix> vowelPrefixConversions = {
     {'U', BanglaVowelPrefix::U}
 };
 
-BanglaVowel EnglishToBangla::parse_vowel(const char *& inputChars) const {
-    return vowelConversions[*inputChars++];
+BanglaVowel EnglishToBangla::parse_vowel(std::istream & inputChars) const {
+    char c;
+    inputChars >> c;
+    return vowelConversions[c];
 }
 
-BanglaLetter EnglishToBangla::parse_letter(const char *& inputChars) const {
-    return letterConversions[*inputChars++];
+BanglaLetter EnglishToBangla::parse_letter(std::istream & inputChars) const {
+    char c;
+    inputChars >> c;
+    return letterConversions[c];
 }
 
-BanglaVowelPrefix EnglishToBangla::parse_vowel_prefix(const char *& inputChars) const {
-    return vowelPrefixConversions[*inputChars++];
+BanglaVowelPrefix EnglishToBangla::parse_vowel_prefix(std::istream & inputChars) const {
+    char c;
+    inputChars >> c;
+    return vowelPrefixConversions[c];
 }
 
 bool EnglishToBangla::is_vowel (const char c) const {
@@ -121,15 +129,19 @@ bool EnglishToBangla::is_vowel (const char c) const {
            c == 'e' || c == 'o';
 }
 
-void EnglishToBangla::convert (const char * inputChars) {
-    const char * itr = inputChars;
-    while (*itr) {
-        if (is_vowel(*itr)) {
-            BanglaVowel vowel = parse_vowel(itr);
+void EnglishToBangla::convert (std::istream & inputChars) {
+    while (inputChars) {
+        const char c = inputChars.peek();
+        if (inputChars.eof()) {
+            break;
+        }
+
+        if (is_vowel(c)) {
+            BanglaVowel vowel = parse_vowel(inputChars);
         }
         else {
-            BanglaLetter letter = parse_letter(itr);
-            BanglaVowelPrefix vowelPrefix = parse_vowel_prefix(itr);
+            BanglaLetter letter = parse_letter(inputChars);
+            BanglaVowelPrefix vowelPrefix = parse_vowel_prefix(inputChars);
             elems_.emplace_back(BanglaElem(letter, vowelPrefix));
         }
     }
@@ -143,7 +155,9 @@ void EnglishToBangla::print () const {
 
 int main () {
     EnglishToBangla converter;
-    converter.convert("kAkU");
+    std::string input = "kAku";
+    std::stringstream inputChars(input);
+    converter.convert(inputChars);
     converter.print();
     std::cout << "\n";
     return 0;

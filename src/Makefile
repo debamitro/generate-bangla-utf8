@@ -10,4 +10,4 @@ ${BINDIR}/generate-bangla: main.o
 	$(CXX) -m32 $^ -o $@
 
 %.o: %.cpp
-	$(CXX) -m32 -Wall -std=c++14 $^ -c
+	$(CXX) -g -m32 -Wall -Wextra -std=c++14 $^ -c
