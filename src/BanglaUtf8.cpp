@@ -76,6 +76,12 @@ static std::unordered_map<char, BanglaLetter> letterConversions = {
     {'m', BanglaLetter::m},
 };
 
+BanglaUtf8::~BanglaUtf8 () {
+    for (auto & elem : elems_) {
+        delete elem;
+    }
+}
+
 BanglaVowel BanglaUtf8::parse_vowel(std::istream & inputChars) const {
     char c;
     inputChars >> c;
@@ -121,6 +127,9 @@ void BanglaUtf8::convert (std::istream & inputChars) {
 
         if (isspace(c)) {
             inputChars.get();
+
+            Utf8Character * elem = new Utf8Character(c);
+            elems_.push_back(elem);
             continue;
         }
         else if (is_vowel(c)) {
@@ -134,13 +143,15 @@ void BanglaUtf8::convert (std::istream & inputChars) {
             if (!inputChars.eof() && is_vowel(c)) {
                 vowelPrefix = parse_vowel_prefix(inputChars);
             }
-            elems_.emplace_back(BanglaElem(letters, vowelPrefix));
+
+            BanglaElem * elem = new BanglaElem(letters, vowelPrefix);
+            elems_.push_back(elem);
         }
     }
 }
 
 void BanglaUtf8::print (std::ostream& outputStream) const {
     for (auto & elem : elems_) {
-        elem.print(outputStream);
+        elem->print(outputStream);
     }
 }
