@@ -42,7 +42,7 @@ static std::unordered_map<BanglaVowel, const char *> VowelprefixMapping = {
 };
 
 void BanglaElem::print(std::ostream & outputStream) const {
-    outputStream << LetterMapping[letter_]
+    outputStream << LetterMapping[letters_[0]]
                  << VowelprefixMapping[vowelPrefix_];
 }
 
@@ -82,10 +82,21 @@ BanglaVowel BanglaUtf8::parse_vowel(std::istream & inputChars) const {
     return vowelConversions[c];
 }
 
-BanglaLetter BanglaUtf8::parse_letter(std::istream & inputChars) const {
-    char c;
-    inputChars >> c;
-    return letterConversions[c];
+std::vector<BanglaLetter> BanglaUtf8::parse_letters(std::istream & inputChars) const {
+    std::vector<BanglaLetter> parsedLetters;
+
+    while (inputChars) {
+        char c;
+        inputChars >> c;
+        if (isspace(c) || is_vowel(c)) {
+            inputChars.unget();
+            break;
+        }
+
+        parsedLetters.push_back(letterConversions[c]);
+    }
+
+    return parsedLetters;
 }
 
 BanglaVowel BanglaUtf8::parse_vowel_prefix(std::istream & inputChars) const {
@@ -116,14 +127,14 @@ void BanglaUtf8::convert (std::istream & inputChars) {
             BanglaVowel vowel = parse_vowel(inputChars);
         }
         else {
-            BanglaLetter letter = parse_letter(inputChars);
+            std::vector<BanglaLetter> letters = parse_letters(inputChars);
 
             const char c = inputChars.peek();
             BanglaVowel vowelPrefix = BanglaVowel::a;
             if (!inputChars.eof() && is_vowel(c)) {
                 vowelPrefix = parse_vowel_prefix(inputChars);
             }
-            elems_.emplace_back(BanglaElem(letter, vowelPrefix));
+            elems_.emplace_back(BanglaElem(letters, vowelPrefix));
         }
     }
 }

@@ -21,14 +21,14 @@ enum class BanglaVowel {
 
 class BanglaElem {
 public:
-    BanglaElem(BanglaLetter letter, BanglaVowel vowelPrefix) :
-        letter_(letter),
+    BanglaElem(const std::vector<BanglaLetter>& letters, BanglaVowel vowelPrefix) :
+        letters_(letters),
         vowelPrefix_(vowelPrefix) {}
     ~BanglaElem() = default;
 
     void print (std::ostream & outputStream) const;
 private:
-    BanglaLetter letter_;
+    std::vector<BanglaLetter> letters_;
     BanglaVowel vowelPrefix_;
 };
 
@@ -41,7 +41,7 @@ public:
     void print (std::ostream & outputStream) const;
 private:
     BanglaVowel parse_vowel(std::istream & inputChars) const;
-    BanglaLetter parse_letter(std::istream & inputChars) const;
+    std::vector<BanglaLetter> parse_letters(std::istream & inputChars) const;
     BanglaVowel parse_vowel_prefix(std::istream & inputChars) const;
     bool is_vowel (char c) const;
     std::vector<BanglaElem> elems_;
