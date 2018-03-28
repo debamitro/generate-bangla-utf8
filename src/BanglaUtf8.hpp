@@ -38,6 +38,9 @@ public:
 
     void print (std::ostream & outputStream) const override;
 private:
+    const char * get_string (BanglaLetter letter) const;
+    const char * get_string (BanglaVowel vowel) const;
+
     std::vector<BanglaLetter> letters_;
     BanglaVowel vowelPrefix_;
 };
@@ -47,7 +50,7 @@ public:
     Utf8Character(char c) : c_(c) {}
     ~Utf8Character() = default;
 
-    void print (std::ostream & outputStream) const {
+    void print (std::ostream & outputStream) const override {
         outputStream << c_;
     }
 

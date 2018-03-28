@@ -38,12 +38,34 @@ static std::unordered_map<BanglaVowel, const char *> VowelprefixMapping = {
     { BanglaVowel::i, u8"\u09BF"},
     { BanglaVowel::I, u8"\u09C0"},
     { BanglaVowel::u, u8"\u09C1"},
-    { BanglaVowel::U, u8"\u09C2"}
+    { BanglaVowel::U, u8"\u09C2"},
+    { BanglaVowel::e, u8"\u09C7"},
+    { BanglaVowel::oi, u8"\u09C8"},
+    { BanglaVowel::o, u8"\u09CB"},
+    { BanglaVowel::ou, u8"\u09CC"}
 };
 
+const char * BanglaElem::get_string (const BanglaLetter letter) const {
+    auto itr = LetterMapping.find(letter);
+    if (itr != LetterMapping.end()) {
+        return itr->second;
+    }
+
+    return "";
+}
+
+const char * BanglaElem::get_string (const BanglaVowel vowel) const {
+    auto itr = VowelprefixMapping.find(vowel);
+    if (itr != VowelprefixMapping.end()) {
+        return itr->second;
+    }
+
+    return "";
+}
+
 void BanglaElem::print(std::ostream & outputStream) const {
-    outputStream << LetterMapping[letters_[0]]
-                 << VowelprefixMapping[vowelPrefix_];
+    outputStream << get_string(letters_[0])
+                 << get_string(vowelPrefix_);
 }
 
 static std::unordered_map<char, BanglaVowel> vowelConversions = {
@@ -76,6 +98,16 @@ static std::unordered_map<char, BanglaLetter> letterConversions = {
     {'m', BanglaLetter::m},
 };
 
+static std::unordered_map<std::string, BanglaLetter> twoLetterConversions = {
+    {"kh", BanglaLetter::K},
+    {"ch", BanglaLetter::ch},
+    {"Ch", BanglaLetter::Ch},
+    {"Th", BanglaLetter::Th},
+    {"Dh", BanglaLetter::Dh},
+    {"th", BanglaLetter::th},
+    {"dh", BanglaLetter::dh}
+};
+
 BanglaUtf8::~BanglaUtf8 () {
     for (auto & elem : elems_) {
         delete elem;
@@ -90,7 +122,7 @@ BanglaVowel BanglaUtf8::parse_vowel(std::istream & inputChars) const {
 
 std::vector<BanglaLetter> BanglaUtf8::parse_letters(std::istream & inputChars) const {
     std::vector<BanglaLetter> parsedLetters;
-
+    std::string letters = "";
     while (inputChars) {
         char c;
         inputChars >> c;
@@ -99,7 +131,25 @@ std::vector<BanglaLetter> BanglaUtf8::parse_letters(std::istream & inputChars) c
             break;
         }
 
-        parsedLetters.push_back(letterConversions[c]);
+        letters += c;
+
+        BanglaLetter parsedLetter = letterConversions[c];
+
+        if (letters.size() > 1) {
+            auto itr = twoLetterConversions.find(letters.substr(letters.size()-2,2));
+            if (itr != twoLetterConversions.end()) {
+                parsedLetter = itr->second;
+                letters.pop_back();
+                letters.pop_back();
+                parsedLetters.pop_back();
+            }
+        }
+
+        parsedLetters.push_back(parsedLetter);
+
+        if (inputChars.eof()) {
+            break;
+        }
     }
 
     return parsedLetters;
