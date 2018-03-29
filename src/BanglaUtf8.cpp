@@ -109,9 +109,14 @@ static std::unordered_map<std::string, BanglaLetter> twoLetterConversions = {
 };
 
 BanglaUtf8::~BanglaUtf8 () {
+    clear();
+}
+
+void BanglaUtf8::clear () {
     for (auto & elem : elems_) {
         delete elem;
     }
+    elems_.clear();
 }
 
 BanglaVowel BanglaUtf8::parse_vowel(std::istream & inputChars) const {
@@ -169,6 +174,7 @@ bool BanglaUtf8::is_vowel (const char c) const {
 }
 
 void BanglaUtf8::convert (std::istream & inputChars) {
+    clear();
     while (inputChars) {
         const char c = inputChars.peek();
         if (inputChars.eof()) {

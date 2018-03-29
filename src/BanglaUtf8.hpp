@@ -65,6 +65,7 @@ public:
 
     void convert (std::istream & inputChars);
     void print (std::ostream & outputStream) const;
+    void clear ();
 private:
     BanglaVowel parse_vowel(std::istream & inputChars) const;
     std::vector<BanglaLetter> parse_letters(std::istream & inputChars) const;
