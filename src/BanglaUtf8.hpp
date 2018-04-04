@@ -45,6 +45,18 @@ private:
     BanglaVowel vowelPrefix_;
 };
 
+class BanglaVowelElem : public BanglaUtf8Elem {
+public:
+    BanglaVowelElem(BanglaVowel vowel) : vowel_(vowel) {}
+    ~BanglaVowelElem() = default;
+
+    void print (std::ostream & outputStream) const override;
+private:
+    const char * get_string (BanglaVowel vowel) const;
+
+    BanglaVowel vowel_;
+};
+
 class Utf8Character : public BanglaUtf8Elem {
 public:
     Utf8Character(char c) : c_(c) {}

@@ -32,6 +32,19 @@ static std::unordered_map<BanglaLetter, const char *> LetterMapping = {
     { BanglaLetter::m, u8"\u09AE"}
 };
 
+static std::unordered_map<BanglaVowel, const char *> VowelMapping = {
+    { BanglaVowel::a, u8"\u0985"},
+    { BanglaVowel::A, u8"\u0986"},
+    { BanglaVowel::i, u8"\u0987"},
+    { BanglaVowel::I, u8"\u0988"},
+    { BanglaVowel::u, u8"\u0989"},
+    { BanglaVowel::U, u8"\u098A"},
+    { BanglaVowel::e, u8"\u098F"},
+    { BanglaVowel::oi, u8"\u0990"},
+    { BanglaVowel::o, u8"\u0993"},
+    { BanglaVowel::ou, u8"\u0994"}
+};
+
 static std::unordered_map<BanglaVowel, const char *> VowelprefixMapping = {
     { BanglaVowel::a, ""},
     { BanglaVowel::A, u8"\u09BE"},
@@ -66,6 +79,19 @@ const char * BanglaElem::get_string (const BanglaVowel vowel) const {
 void BanglaElem::print(std::ostream & outputStream) const {
     outputStream << get_string(letters_[0])
                  << get_string(vowelPrefix_);
+}
+
+const char * BanglaVowelElem::get_string (const BanglaVowel vowel) const {
+    auto itr = VowelMapping.find(vowel);
+    if (itr != VowelMapping.end()) {
+        return itr->second;
+    }
+
+    return "";
+}
+
+void BanglaVowelElem::print(std::ostream & outputStream) const {
+    outputStream << get_string(vowel_);
 }
 
 static std::unordered_map<char, BanglaVowel> vowelConversions = {
@@ -121,7 +147,7 @@ void BanglaUtf8::clear () {
 
 BanglaVowel BanglaUtf8::parse_vowel(std::istream & inputChars) const {
     char c;
-    inputChars >> c;
+    inputChars.get(c);
     return vowelConversions[c];
 }
 
@@ -130,7 +156,7 @@ std::vector<BanglaLetter> BanglaUtf8::parse_letters(std::istream & inputChars) c
     std::string letters = "";
     while (inputChars) {
         char c;
-        inputChars >> c;
+        inputChars.get(c);
         if (isspace(c) || is_vowel(c)) {
             inputChars.unget();
             break;
@@ -162,7 +188,7 @@ std::vector<BanglaLetter> BanglaUtf8::parse_letters(std::istream & inputChars) c
 
 BanglaVowel BanglaUtf8::parse_vowel_prefix(std::istream & inputChars) const {
     char c;
-    inputChars >> c;
+    inputChars.get(c);
     return vowelConversions[c];
 }
 
@@ -190,6 +216,9 @@ void BanglaUtf8::convert (std::istream & inputChars) {
         }
         else if (is_vowel(c)) {
             BanglaVowel vowel = parse_vowel(inputChars);
+
+            BanglaVowelElem * elem = new BanglaVowelElem(vowel);
+            elems_.push_back(elem);
         }
         else {
             std::vector<BanglaLetter> letters = parse_letters(inputChars);
