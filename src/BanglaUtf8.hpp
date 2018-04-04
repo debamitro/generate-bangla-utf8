@@ -11,7 +11,9 @@ enum class BanglaLetter {
     ch, Ch, j, J, NG,
     T, Th, D, Dh, N,
     t, th, d, dh, n,
-    p, f, b, bh, m
+    p, f, b, bh, m,
+    y, r, l, sh, Sh, s, h,
+    rh, Rh
 };
 
 enum class BanglaVowel {

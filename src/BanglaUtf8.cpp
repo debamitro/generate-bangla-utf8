@@ -29,7 +29,9 @@ static std::unordered_map<BanglaLetter, const char *> LetterMapping = {
     { BanglaLetter::f, u8"\u09AB"},
     { BanglaLetter::b, u8"\u09AC"},
     { BanglaLetter::bh, u8"\u09AD"},
-    { BanglaLetter::m, u8"\u09AE"}
+    { BanglaLetter::m, u8"\u09AE"},
+    { BanglaLetter::y, u8"\u09AF"},
+    { BanglaLetter::r, u8"\u09B0"}
 };
 
 static std::unordered_map<BanglaVowel, const char *> VowelMapping = {
@@ -77,8 +79,17 @@ const char * BanglaElem::get_string (const BanglaVowel vowel) const {
 }
 
 void BanglaElem::print(std::ostream & outputStream) const {
-    outputStream << get_string(letters_[0])
-                 << get_string(vowelPrefix_);
+    if (letters_.size() > 1) {
+        outputStream << get_string(letters_[0]);
+        for (unsigned long i = 1; i < letters_.size(); ++i) {
+            outputStream << u8"\u09CD"
+                         << get_string(letters_[i]);
+        }
+    }
+    else {
+        outputStream << get_string(letters_[0]);
+    }
+    outputStream << get_string(vowelPrefix_);
 }
 
 const char * BanglaVowelElem::get_string (const BanglaVowel vowel) const {
@@ -122,6 +133,8 @@ static std::unordered_map<char, BanglaLetter> letterConversions = {
     {'f', BanglaLetter::f},
     {'b', BanglaLetter::b},
     {'m', BanglaLetter::m},
+    {'y', BanglaLetter::y},
+    {'r', BanglaLetter::r}
 };
 
 static std::unordered_map<std::string, BanglaLetter> twoLetterConversions = {
