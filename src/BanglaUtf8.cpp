@@ -4,7 +4,7 @@
 #include <vector>
 #include <ctype.h>
 
-static const std::unordered_map<BanglaConsonant, const char *> LetterMapping = {
+static const std::unordered_map<BanglaConsonant, const char *> consonantToUtf8 = {
     { BanglaConsonant::k, u8"\u0995"},
     { BanglaConsonant::K, u8"\u0996"},
     { BanglaConsonant::g, u8"\u0997"},
@@ -41,7 +41,16 @@ static const std::unordered_map<BanglaConsonant, const char *> LetterMapping = {
     { BanglaConsonant::Rh, u8"\u09DD"}
 };
 
-static const std::unordered_map<BanglaVowel, const char *> VowelMapping = {
+const char * BanglaElem::get_utf8_string (const BanglaConsonant letter) const {
+    auto itr = consonantToUtf8.find(letter);
+    if (itr != consonantToUtf8.end()) {
+        return itr->second;
+    }
+
+    return "";
+}
+
+static const std::unordered_map<BanglaVowel, const char *> vowelToUtf8 = {
     { BanglaVowel::a, u8"\u0985"},
     { BanglaVowel::A, u8"\u0986"},
     { BanglaVowel::i, u8"\u0987"},
@@ -54,7 +63,16 @@ static const std::unordered_map<BanglaVowel, const char *> VowelMapping = {
     { BanglaVowel::ou, u8"\u0994"}
 };
 
-static const std::unordered_map<BanglaVowel, const char *> VowelprefixMapping = {
+const char * BanglaVowelElem::get_utf8_string (const BanglaVowel vowel) const {
+    auto itr = vowelToUtf8.find(vowel);
+    if (itr != vowelToUtf8.end()) {
+        return itr->second;
+    }
+
+    return "";
+}
+
+static const std::unordered_map<BanglaVowel, const char *> vowelprefixToUtf8 = {
     { BanglaVowel::a, ""},
     { BanglaVowel::A, u8"\u09BE"},
     { BanglaVowel::i, u8"\u09BF"},
@@ -67,18 +85,9 @@ static const std::unordered_map<BanglaVowel, const char *> VowelprefixMapping = 
     { BanglaVowel::ou, u8"\u09CC"}
 };
 
-const char * BanglaElem::get_string (const BanglaConsonant letter) const {
-    auto itr = LetterMapping.find(letter);
-    if (itr != LetterMapping.end()) {
-        return itr->second;
-    }
-
-    return "";
-}
-
-const char * BanglaElem::get_string (const BanglaVowel vowel) const {
-    auto itr = VowelprefixMapping.find(vowel);
-    if (itr != VowelprefixMapping.end()) {
+const char * BanglaElem::get_utf8_string (const BanglaVowel vowel) const {
+    auto itr = vowelprefixToUtf8.find(vowel);
+    if (itr != vowelprefixToUtf8.end()) {
         return itr->second;
     }
 
@@ -86,33 +95,21 @@ const char * BanglaElem::get_string (const BanglaVowel vowel) const {
 }
 
 void BanglaElem::print(std::ostream & outputStream) const {
+    outputStream << get_utf8_string(letters_[0]);
     if (letters_.size() > 1) {
-        outputStream << get_string(letters_[0]);
         for (unsigned long i = 1; i < letters_.size(); ++i) {
             outputStream << u8"\u09CD"
-                         << get_string(letters_[i]);
+                         << get_utf8_string(letters_[i]);
         }
     }
-    else {
-        outputStream << get_string(letters_[0]);
-    }
-    outputStream << get_string(vowelPrefix_);
-}
-
-const char * BanglaVowelElem::get_string (const BanglaVowel vowel) const {
-    auto itr = VowelMapping.find(vowel);
-    if (itr != VowelMapping.end()) {
-        return itr->second;
-    }
-
-    return "";
+    outputStream << get_utf8_string(vowelPrefix_);
 }
 
 void BanglaVowelElem::print(std::ostream & outputStream) const {
-    outputStream << get_string(vowel_);
+    outputStream << get_utf8_string(vowel_);
 }
 
-static const std::unordered_map<char, BanglaVowel> vowelConversions = {
+static const std::unordered_map<char, BanglaVowel> oneLetterToVowel = {
     {'a', BanglaVowel::a},
     {'A', BanglaVowel::A},
     {'i', BanglaVowel::i},
@@ -123,7 +120,7 @@ static const std::unordered_map<char, BanglaVowel> vowelConversions = {
     {'o', BanglaVowel::o}
 };
 
-static const std::unordered_map<char, BanglaConsonant> letterConversions = {
+static const std::unordered_map<char, BanglaConsonant> oneLetterToConsonant = {
     {'k', BanglaConsonant::k},
     {'K', BanglaConsonant::K},
     {'g', BanglaConsonant::g},
@@ -149,7 +146,7 @@ static const std::unordered_map<char, BanglaConsonant> letterConversions = {
     {'h', BanglaConsonant::h}
 };
 
-static const std::unordered_map<std::string, BanglaConsonant> twoLetterConversions = {
+static const std::unordered_map<std::string, BanglaConsonant> twoLettersToConsonant = {
     {"kh", BanglaConsonant::K},
     {"gh", BanglaConsonant::G},
     {"ch", BanglaConsonant::ch},
@@ -182,8 +179,8 @@ BanglaVowel BanglaUtf8::parse_vowel(std::istream & inputChars) const {
     char c;
     inputChars.get(c);
 
-    auto itr = vowelConversions.find(c);
-    if (itr != vowelConversions.end()) {
+    auto itr = oneLetterToVowel.find(c);
+    if (itr != oneLetterToVowel.end()) {
         return itr->second;
     }
     else {
@@ -206,8 +203,8 @@ std::vector<BanglaConsonant> BanglaUtf8::parse_consonants(std::istream & inputCh
         letters += c;
 
         BanglaConsonant parsedLetter;
-        auto itr = letterConversions.find(c);
-        if (itr != letterConversions.end()) {
+        auto itr = oneLetterToConsonant.find(c);
+        if (itr != oneLetterToConsonant.end()) {
             parsedLetter = itr->second;
         }
         else {
@@ -216,8 +213,8 @@ std::vector<BanglaConsonant> BanglaUtf8::parse_consonants(std::istream & inputCh
         }
 
         if (letters.size() > 1) {
-            auto itr = twoLetterConversions.find(letters.substr(letters.size()-2,2));
-            if (itr != twoLetterConversions.end()) {
+            auto itr = twoLettersToConsonant.find(letters.substr(letters.size()-2,2));
+            if (itr != twoLettersToConsonant.end()) {
                 parsedLetter = itr->second;
                 letters.pop_back();
                 letters.pop_back();
