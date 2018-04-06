@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 
-enum class BanglaLetter {
+enum class BanglaConsonant {
     a, A, i, I, u, U,
     e, oi, o, ou,
     k, K, g, G, ng,
@@ -33,17 +33,17 @@ public:
 
 class BanglaElem : public BanglaUtf8Elem {
 public:
-    BanglaElem(const std::vector<BanglaLetter>& letters, BanglaVowel vowelPrefix) :
+    BanglaElem(const std::vector<BanglaConsonant>& letters, BanglaVowel vowelPrefix) :
         letters_(letters),
         vowelPrefix_(vowelPrefix) {}
     ~BanglaElem() = default;
 
     void print (std::ostream & outputStream) const override;
 private:
-    const char * get_string (BanglaLetter letter) const;
+    const char * get_string (BanglaConsonant letter) const;
     const char * get_string (BanglaVowel vowel) const;
 
-    std::vector<BanglaLetter> letters_;
+    std::vector<BanglaConsonant> letters_;
     BanglaVowel vowelPrefix_;
 };
 
@@ -82,7 +82,7 @@ public:
     void clear ();
 private:
     BanglaVowel parse_vowel(std::istream & inputChars) const;
-    std::vector<BanglaLetter> parse_letters(std::istream & inputChars) const;
+    std::vector<BanglaConsonant> parse_letters(std::istream & inputChars) const;
     BanglaVowel parse_vowel_prefix(std::istream & inputChars) const;
     bool is_vowel (char c) const;
     std::vector<BanglaUtf8Elem *> elems_;

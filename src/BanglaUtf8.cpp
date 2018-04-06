@@ -4,34 +4,34 @@
 #include <vector>
 #include <ctype.h>
 
-static std::unordered_map<BanglaLetter, const char *> LetterMapping = {
-    { BanglaLetter::k, u8"\u0995"},
-    { BanglaLetter::K, u8"\u0996"},
-    { BanglaLetter::g, u8"\u0997"},
-    { BanglaLetter::G, u8"\u0998"},
-    { BanglaLetter::ng, u8"\u0999"},
-    { BanglaLetter::ch, u8"\u099A"},
-    { BanglaLetter::Ch, u8"\u099B"},
-    { BanglaLetter::j, u8"\u099C"},
-    { BanglaLetter::J, u8"\u099D"},
-    { BanglaLetter::NG, u8"\u099E"},
-    { BanglaLetter::T, u8"\u099F"},
-    { BanglaLetter::Th, u8"\u09A0"},
-    { BanglaLetter::D, u8"\u09A1"},
-    { BanglaLetter::Dh, u8"\u09A2"},
-    { BanglaLetter::N, u8"\u09A3"},
-    { BanglaLetter::t, u8"\u09A4"},
-    { BanglaLetter::th, u8"\u09A5"},
-    { BanglaLetter::d, u8"\u09A6"},
-    { BanglaLetter::dh, u8"\u09A7"},
-    { BanglaLetter::n, u8"\u09A8"},
-    { BanglaLetter::p, u8"\u09AA"},
-    { BanglaLetter::f, u8"\u09AB"},
-    { BanglaLetter::b, u8"\u09AC"},
-    { BanglaLetter::bh, u8"\u09AD"},
-    { BanglaLetter::m, u8"\u09AE"},
-    { BanglaLetter::y, u8"\u09AF"},
-    { BanglaLetter::r, u8"\u09B0"}
+static std::unordered_map<BanglaConsonant, const char *> LetterMapping = {
+    { BanglaConsonant::k, u8"\u0995"},
+    { BanglaConsonant::K, u8"\u0996"},
+    { BanglaConsonant::g, u8"\u0997"},
+    { BanglaConsonant::G, u8"\u0998"},
+    { BanglaConsonant::ng, u8"\u0999"},
+    { BanglaConsonant::ch, u8"\u099A"},
+    { BanglaConsonant::Ch, u8"\u099B"},
+    { BanglaConsonant::j, u8"\u099C"},
+    { BanglaConsonant::J, u8"\u099D"},
+    { BanglaConsonant::NG, u8"\u099E"},
+    { BanglaConsonant::T, u8"\u099F"},
+    { BanglaConsonant::Th, u8"\u09A0"},
+    { BanglaConsonant::D, u8"\u09A1"},
+    { BanglaConsonant::Dh, u8"\u09A2"},
+    { BanglaConsonant::N, u8"\u09A3"},
+    { BanglaConsonant::t, u8"\u09A4"},
+    { BanglaConsonant::th, u8"\u09A5"},
+    { BanglaConsonant::d, u8"\u09A6"},
+    { BanglaConsonant::dh, u8"\u09A7"},
+    { BanglaConsonant::n, u8"\u09A8"},
+    { BanglaConsonant::p, u8"\u09AA"},
+    { BanglaConsonant::f, u8"\u09AB"},
+    { BanglaConsonant::b, u8"\u09AC"},
+    { BanglaConsonant::bh, u8"\u09AD"},
+    { BanglaConsonant::m, u8"\u09AE"},
+    { BanglaConsonant::y, u8"\u09AF"},
+    { BanglaConsonant::r, u8"\u09B0"}
 };
 
 static std::unordered_map<BanglaVowel, const char *> VowelMapping = {
@@ -60,7 +60,7 @@ static std::unordered_map<BanglaVowel, const char *> VowelprefixMapping = {
     { BanglaVowel::ou, u8"\u09CC"}
 };
 
-const char * BanglaElem::get_string (const BanglaLetter letter) const {
+const char * BanglaElem::get_string (const BanglaConsonant letter) const {
     auto itr = LetterMapping.find(letter);
     if (itr != LetterMapping.end()) {
         return itr->second;
@@ -116,35 +116,35 @@ static std::unordered_map<char, BanglaVowel> vowelConversions = {
     {'o', BanglaVowel::o}
 };
 
-static std::unordered_map<char, BanglaLetter> letterConversions = {
-    {'k', BanglaLetter::k},
-    {'K', BanglaLetter::K},
-    {'g', BanglaLetter::g},
-    {'G', BanglaLetter::G},
-    {'c', BanglaLetter::ch},
-    {'C', BanglaLetter::Ch},
-    {'j', BanglaLetter::j},
-    {'J', BanglaLetter::J},
-    {'T', BanglaLetter::T},
-    {'D', BanglaLetter::D},
-    {'t', BanglaLetter::t},
-    {'d', BanglaLetter::d},
-    {'p', BanglaLetter::p},
-    {'f', BanglaLetter::f},
-    {'b', BanglaLetter::b},
-    {'m', BanglaLetter::m},
-    {'y', BanglaLetter::y},
-    {'r', BanglaLetter::r}
+static std::unordered_map<char, BanglaConsonant> letterConversions = {
+    {'k', BanglaConsonant::k},
+    {'K', BanglaConsonant::K},
+    {'g', BanglaConsonant::g},
+    {'G', BanglaConsonant::G},
+    {'c', BanglaConsonant::ch},
+    {'C', BanglaConsonant::Ch},
+    {'j', BanglaConsonant::j},
+    {'J', BanglaConsonant::J},
+    {'T', BanglaConsonant::T},
+    {'D', BanglaConsonant::D},
+    {'t', BanglaConsonant::t},
+    {'d', BanglaConsonant::d},
+    {'p', BanglaConsonant::p},
+    {'f', BanglaConsonant::f},
+    {'b', BanglaConsonant::b},
+    {'m', BanglaConsonant::m},
+    {'y', BanglaConsonant::y},
+    {'r', BanglaConsonant::r}
 };
 
-static std::unordered_map<std::string, BanglaLetter> twoLetterConversions = {
-    {"kh", BanglaLetter::K},
-    {"ch", BanglaLetter::ch},
-    {"Ch", BanglaLetter::Ch},
-    {"Th", BanglaLetter::Th},
-    {"Dh", BanglaLetter::Dh},
-    {"th", BanglaLetter::th},
-    {"dh", BanglaLetter::dh}
+static std::unordered_map<std::string, BanglaConsonant> twoLetterConversions = {
+    {"kh", BanglaConsonant::K},
+    {"ch", BanglaConsonant::ch},
+    {"Ch", BanglaConsonant::Ch},
+    {"Th", BanglaConsonant::Th},
+    {"Dh", BanglaConsonant::Dh},
+    {"th", BanglaConsonant::th},
+    {"dh", BanglaConsonant::dh}
 };
 
 BanglaUtf8::~BanglaUtf8 () {
@@ -164,8 +164,8 @@ BanglaVowel BanglaUtf8::parse_vowel(std::istream & inputChars) const {
     return vowelConversions[c];
 }
 
-std::vector<BanglaLetter> BanglaUtf8::parse_letters(std::istream & inputChars) const {
-    std::vector<BanglaLetter> parsedLetters;
+std::vector<BanglaConsonant> BanglaUtf8::parse_letters(std::istream & inputChars) const {
+    std::vector<BanglaConsonant> parsedLetters;
     std::string letters = "";
     while (inputChars) {
         char c;
@@ -177,7 +177,7 @@ std::vector<BanglaLetter> BanglaUtf8::parse_letters(std::istream & inputChars) c
 
         letters += c;
 
-        BanglaLetter parsedLetter = letterConversions[c];
+        BanglaConsonant parsedLetter = letterConversions[c];
 
         if (letters.size() > 1) {
             auto itr = twoLetterConversions.find(letters.substr(letters.size()-2,2));
@@ -234,7 +234,7 @@ void BanglaUtf8::convert (std::istream & inputChars) {
             elems_.push_back(elem);
         }
         else {
-            std::vector<BanglaLetter> letters = parse_letters(inputChars);
+            std::vector<BanglaConsonant> letters = parse_letters(inputChars);
 
             const char c = inputChars.peek();
             BanglaVowel vowelPrefix = BanglaVowel::a;

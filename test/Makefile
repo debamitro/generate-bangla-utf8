@@ -4,7 +4,7 @@ BINDIR=.
 SRCDIR=../src/
 
 all: ${BINDIR}/test-bangla
-
+	$(BINDIR)/test-bangla
 clean:
 	$(RM)  $(BINDIR)/test-bangla *.o
 
