@@ -82,8 +82,7 @@ public:
     void clear ();
 private:
     BanglaVowel parse_vowel(std::istream & inputChars) const;
-    std::vector<BanglaConsonant> parse_letters(std::istream & inputChars) const;
-    BanglaVowel parse_vowel_prefix(std::istream & inputChars) const;
+    std::vector<BanglaConsonant> parse_consonants(std::istream & inputChars) const;
     bool is_vowel (char c) const;
     std::vector<BanglaUtf8Elem *> elems_;
 };
