@@ -151,6 +151,7 @@ static const std::unordered_map<std::string, BanglaConsonant> twoLettersToConson
     {"gh", BanglaConsonant::G},
     {"ch", BanglaConsonant::ch},
     {"Ch", BanglaConsonant::Ch},
+    {"jh", BanglaConsonant::J},
     {"Th", BanglaConsonant::Th},
     {"Dh", BanglaConsonant::Dh},
     {"th", BanglaConsonant::th},
