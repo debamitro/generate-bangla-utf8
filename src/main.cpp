@@ -8,10 +8,16 @@
 int main (int argc, char ** argv) {
     CommandLine arguments(argc, argv);
 
+    BanglaUtf8 converter;
     if (arguments.present("inputFile")) {
         std::ifstream inputFile(arguments.get("inputFile"));
-        BanglaUtf8 converter;
         converter.convert(inputFile);
+        converter.print(std::cout);
+
+        return 0;
+    }
+    else {
+        converter.convert(std::cin);
         converter.print(std::cout);
 
         return 0;

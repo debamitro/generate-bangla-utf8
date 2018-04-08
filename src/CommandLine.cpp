@@ -26,4 +26,5 @@ std::string CommandLine::get(const char * argName) const {
 
 void CommandLine::print_usage() const {
     std::cout << "Usage: " << exeName_ << " <input-file>\n";
+    std::cout << "(If there is no input file then stdin is assumed to be the input)\n";
 }
