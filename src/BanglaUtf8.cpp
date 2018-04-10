@@ -94,6 +94,20 @@ const char * BanglaElem::get_utf8_string (const BanglaVowel vowel) const {
     return "";
 }
 
+static const std::unordered_map<BanglaSymbol, const char *> symbolToUtf8 = {
+    { BanglaSymbol::cbindu, u8"\u0981"},
+    { BanglaSymbol::bisarga, u8"\u0983"}
+};
+
+const char * BanglaSymbolElem::get_utf8_string (const BanglaSymbol symbol) const {
+    auto itr = symbolToUtf8.find(symbol);
+    if (itr != symbolToUtf8.end()) {
+        return itr->second;
+    }
+
+    return "";
+}
+
 void BanglaElem::print(std::ostream & outputStream) const {
     outputStream << get_utf8_string(letters_[0]);
     if (letters_.size() > 1) {
@@ -107,6 +121,10 @@ void BanglaElem::print(std::ostream & outputStream) const {
 
 void BanglaVowelElem::print(std::ostream & outputStream) const {
     outputStream << get_utf8_string(vowel_);
+}
+
+void BanglaSymbolElem::print (std::ostream & outputStream) const {
+    outputStream << get_utf8_string(symbol_);
 }
 
 static const std::unordered_map<char, BanglaVowel> oneLetterToVowel = {
@@ -233,11 +251,31 @@ std::vector<BanglaConsonant> BanglaUtf8::parse_consonants(std::istream & inputCh
     return parsedLetters;
 }
 
+BanglaSymbol BanglaUtf8::parse_symbol (std::istream & inputChars) const {
+    char c;
+    inputChars.get(c);
+
+    if (c == '^') {
+        return BanglaSymbol::cbindu;
+    }
+    else if (c == ':') {
+        return BanglaSymbol::bisarga;
+    }
+    else {
+        std::cout << "Couldn't parse symbol " << c << "\n";
+        std::exit(1);
+    }
+}
+
 bool BanglaUtf8::is_vowel (const char c) const {
     return c == 'a' || c == 'A' ||
            c == 'i' || c == 'I' ||
            c == 'u' || c == 'U' ||
            c == 'e' || c == 'o';
+}
+
+bool BanglaUtf8::is_symbol (const char c) const {
+    return c == '^' || c == ':';
 }
 
 void BanglaUtf8::convert (std::istream & inputChars) {
@@ -253,12 +291,17 @@ void BanglaUtf8::convert (std::istream & inputChars) {
 
             Utf8Character * elem = new Utf8Character(c);
             elems_.push_back(elem);
-            continue;
         }
         else if (is_vowel(c)) {
             BanglaVowel vowel = parse_vowel(inputChars);
 
             BanglaVowelElem * elem = new BanglaVowelElem(vowel);
+            elems_.push_back(elem);
+        }
+        else if (is_symbol(c)) {
+            BanglaSymbol symbol = parse_symbol(inputChars);
+
+            BanglaSymbolElem * elem = new BanglaSymbolElem(symbol);
             elems_.push_back(elem);
         }
         else {

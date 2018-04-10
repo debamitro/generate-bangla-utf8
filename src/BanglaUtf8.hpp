@@ -21,6 +21,10 @@ enum class BanglaVowel {
     e, oi, o, ou
 };
 
+enum class BanglaSymbol {
+    cbindu, bisarga
+};
+
 class BanglaUtf8Elem {
 public:
     BanglaUtf8Elem() = default;
@@ -59,6 +63,18 @@ private:
     BanglaVowel vowel_;
 };
 
+class BanglaSymbolElem : public BanglaUtf8Elem {
+public:
+    BanglaSymbolElem(BanglaSymbol symbol) : symbol_(symbol) {}
+    ~BanglaSymbolElem() = default;
+
+    void print (std::ostream & outputStream) const override;
+private:
+    const char * get_utf8_string (BanglaSymbol symbol) const;
+
+    BanglaSymbol symbol_;
+};
+
 class Utf8Character : public BanglaUtf8Elem {
 public:
     Utf8Character(char c) : c_(c) {}
@@ -83,7 +99,9 @@ public:
 private:
     BanglaVowel parse_vowel(std::istream & inputChars) const;
     std::vector<BanglaConsonant> parse_consonants(std::istream & inputChars) const;
+    BanglaSymbol parse_symbol(std::istream & inputChars) const;
     bool is_vowel (char c) const;
+    bool is_symbol (char c) const;
     std::vector<BanglaUtf8Elem *> elems_;
 };
 
