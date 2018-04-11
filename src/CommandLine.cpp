@@ -6,7 +6,7 @@
 CommandLine::CommandLine(int argc, char ** argv) : exeName_(argv[0]) {
     bool foundFileName = false;
     for (int i = 1; i < argc; ++i) {
-        if (argv[i][0] == '-') {
+        if (argv[i][0] == '-' && argv[i][1] != '\0') {
             // Handle - options
         }
         else if (!foundFileName) {
@@ -26,5 +26,5 @@ std::string CommandLine::get(const char * argName) const {
 
 void CommandLine::print_usage() const {
     std::cout << "Usage: " << exeName_ << " <input-file>\n";
-    std::cout << "(If there is no input file then stdin is assumed to be the input)\n";
+    std::cout << "(If '-' is given as input file name then stdin is assumed to be the input)\n";
 }

@@ -10,14 +10,13 @@ int main (int argc, char ** argv) {
 
     BanglaUtf8 converter;
     if (arguments.present("inputFile")) {
-        std::ifstream inputFile(arguments.get("inputFile"));
-        converter.convert(inputFile);
-        converter.print(std::cout);
-
-        return 0;
-    }
-    else {
-        converter.convert(std::cin);
+        if (arguments.get("inputFile") == "-") {
+            converter.convert(std::cin);
+        }
+        else {
+            std::ifstream inputFile(arguments.get("inputFile"));
+            converter.convert(inputFile);
+        }
         converter.print(std::cout);
 
         return 0;
