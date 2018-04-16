@@ -27,6 +27,7 @@ int main () {
     int numPasses = 0;
     numPasses += verify_conversion ("kAku",u8"\u0995\u09BE\u0995\u09C1");
     numPasses += verify_conversion ("gAdhA",u8"\u0997\u09BE\u09A7\u09BE");
+    numPasses += verify_conversion ("bA;lA bhAShA",u8"\u09AC\u09BE\u0982\u09B2\u09BE \u09AD\u09BE\u09B7\u09BE");
     std::cout << numPasses << " tests passed\n";
     return 0;
 }
