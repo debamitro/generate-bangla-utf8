@@ -96,7 +96,8 @@ const char * BanglaElem::get_utf8_string (const BanglaVowel vowel) const {
 
 static const std::unordered_map<BanglaSymbol, const char *> symbolToUtf8 = {
     { BanglaSymbol::cbindu, u8"\u0981"},
-    { BanglaSymbol::bisarga, u8"\u0983"}
+    { BanglaSymbol::bisarga, u8"\u0983"},
+    { BanglaSymbol::anuswar, u8"\u0982"}
 };
 
 const char * BanglaSymbolElem::get_utf8_string (const BanglaSymbol symbol) const {
@@ -227,8 +228,7 @@ std::vector<BanglaConsonant> BanglaUtf8::parse_consonants(std::istream & inputCh
             parsedLetter = itr->second;
         }
         else {
-            std::cout << "Couldn't parse consonant " << c << "\n";
-            std::exit(1);
+            continue;
         }
 
         if (letters.size() > 1) {
@@ -237,7 +237,9 @@ std::vector<BanglaConsonant> BanglaUtf8::parse_consonants(std::istream & inputCh
                 parsedLetter = itr->second;
                 letters.pop_back();
                 letters.pop_back();
-                parsedLetters.pop_back();
+                if (parsedLetters.size() > 0) {
+                    parsedLetters.pop_back();
+                }
             }
         }
 
@@ -246,6 +248,11 @@ std::vector<BanglaConsonant> BanglaUtf8::parse_consonants(std::istream & inputCh
         if (inputChars.eof()) {
             break;
         }
+    }
+
+    if (parsedLetters.empty()) {
+        std::cout << "Couldn't parse consonants from " << letters << "\n";
+        std::exit(1);
     }
 
     return parsedLetters;
@@ -261,6 +268,9 @@ BanglaSymbol BanglaUtf8::parse_symbol (std::istream & inputChars) const {
     else if (c == ':') {
         return BanglaSymbol::bisarga;
     }
+    else if (c == ';') {
+        return BanglaSymbol::anuswar;
+    }
     else {
         std::cout << "Couldn't parse symbol " << c << "\n";
         std::exit(1);
@@ -275,7 +285,7 @@ bool BanglaUtf8::is_vowel (const char c) const {
 }
 
 bool BanglaUtf8::is_symbol (const char c) const {
-    return c == '^' || c == ':';
+    return c == '^' || c == ':' || c == ';';
 }
 
 void BanglaUtf8::convert (std::istream & inputChars) {

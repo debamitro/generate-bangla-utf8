@@ -22,7 +22,7 @@ enum class BanglaVowel {
 };
 
 enum class BanglaSymbol {
-    cbindu, bisarga
+    cbindu, bisarga, anuswar
 };
 
 class BanglaUtf8Elem {
