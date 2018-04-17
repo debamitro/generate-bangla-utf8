@@ -6,19 +6,34 @@ This is a translator from Bangla typed using Roman characters to utf8-encoded Un
 
 The input format is still evolving. Right now it is:
 
-| Bangla  |  Key(s)    |
-| ------- | ---------- |
-|   ক     |  k or ka   |
-|   খ     |  kh or kha |
+| Bangla Consonant |  Key(s)    |
+| ---------------- | ---------- |
+|   ক              |  k or ka   |
+|   খ              |  kh or kha |
+|   গ              |  g or ga   |
 
 (To be completed ... )
 
+| Bangla Vowel | Key(s) |
+| ------------ | ------ |
+|     অ        |   a    |
+|     আ        |   A    |
+
+(To be completed ... )
+
+| Bangla Symbol | Key(s) |
+| ------------- | ------ |
+|      ঁ        |    ^   |
+|      ঃ        |    :   |
+|       ং       |    ;   |
+
+
 ## Examples
 
-If you give the input:
+Input  : Ashbiner mAjhAmAjhi uThila bAjanA bAji
 
-Ashbiner mAjhAmAjhi uThila bAjanA bAji
+Output : আশ্বিনের মাঝামাঝি উঠিল বাজনা বাজি
 
-Then you will get the output:
+Input: hu^ko mukho hyA;lA bArhi tAr bA;lA
 
-আশ্বিনের মাঝামাঝি উঠিল বাজনা বাজি
+Output: হুঁকো মুখো হ্যাংলা বাড়ি তার বাংলা
