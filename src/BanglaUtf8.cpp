@@ -4,7 +4,15 @@
 #include <vector>
 #include <ctype.h>
 
-static const std::unordered_map<BanglaConsonant, const char *> consonantToUtf8 = {
+template <class T>
+struct int_hash {
+    std::size_t operator() (const T& key) const {
+        std::hash<int> func;
+        return func(static_cast<int>(key));
+    }
+};
+
+static const std::unordered_map<BanglaConsonant, const char *, int_hash<BanglaConsonant> > consonantToUtf8 = {
     { BanglaConsonant::k, u8"\u0995"},
     { BanglaConsonant::K, u8"\u0996"},
     { BanglaConsonant::g, u8"\u0997"},
@@ -50,7 +58,7 @@ const char * BanglaElem::get_utf8_string (const BanglaConsonant letter) const {
     return "";
 }
 
-static const std::unordered_map<BanglaVowel, const char *> vowelToUtf8 = {
+static const std::unordered_map<BanglaVowel, const char *, int_hash<BanglaVowel> > vowelToUtf8 = {
     { BanglaVowel::a, u8"\u0985"},
     { BanglaVowel::A, u8"\u0986"},
     { BanglaVowel::i, u8"\u0987"},
@@ -72,7 +80,7 @@ const char * BanglaVowelElem::get_utf8_string (const BanglaVowel vowel) const {
     return "";
 }
 
-static const std::unordered_map<BanglaVowel, const char *> vowelprefixToUtf8 = {
+static const std::unordered_map<BanglaVowel, const char *, int_hash<BanglaVowel> > vowelprefixToUtf8 = {
     { BanglaVowel::a, ""},
     { BanglaVowel::A, u8"\u09BE"},
     { BanglaVowel::i, u8"\u09BF"},
@@ -94,7 +102,7 @@ const char * BanglaElem::get_utf8_string (const BanglaVowel vowel) const {
     return "";
 }
 
-static const std::unordered_map<BanglaSymbol, const char *> symbolToUtf8 = {
+static const std::unordered_map<BanglaSymbol, const char *, int_hash<BanglaSymbol> > symbolToUtf8 = {
     { BanglaSymbol::cbindu, u8"\u0981"},
     { BanglaSymbol::bisarga, u8"\u0983"},
     { BanglaSymbol::anuswar, u8"\u0982"}
