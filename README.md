@@ -2,6 +2,18 @@
 
 This is a translator from Bangla typed using Roman characters to utf8-encoded Unicode.
 
+## How to build
+
+```
+make
+```
+
+There is a self-checking test which can be built and run using
+
+```
+make tests
+```
+
 ## Input format
 
 The input format is still evolving. Right now it is:
