@@ -203,6 +203,7 @@ void BanglaUtf8::clear () {
     elems_.clear();
 }
 
+// TODO - this routine needs to recgnize two-letter vowels (oi and ou)
 BanglaVowel BanglaUtf8::parse_vowel(std::istream & inputChars) const {
     char c;
     inputChars.get(c);
@@ -305,24 +306,31 @@ void BanglaUtf8::convert (std::istream & inputChars) {
         }
 
         if (isspace(c)) {
+            // Recognize a space character
+
             inputChars.get();
 
             Utf8Character * elem = new Utf8Character(c);
             elems_.push_back(elem);
         }
         else if (is_vowel(c)) {
+            // Recognize a one-letter or two-letter vowel
+
             BanglaVowel vowel = parse_vowel(inputChars);
 
             BanglaVowelElem * elem = new BanglaVowelElem(vowel);
             elems_.push_back(elem);
         }
         else if (is_symbol(c)) {
+            // Recognize a symbol - these are all one-letter
+
             BanglaSymbol symbol = parse_symbol(inputChars);
 
             BanglaSymbolElem * elem = new BanglaSymbolElem(symbol);
             elems_.push_back(elem);
         }
         else {
+            // Recognize a consonant optionally followed by a vowel
             std::vector<BanglaConsonant> letters = parse_consonants(inputChars);
 
             const char c = inputChars.peek();
