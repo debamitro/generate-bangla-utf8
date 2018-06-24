@@ -192,6 +192,10 @@ static const std::unordered_map<std::string, BanglaConsonant> twoLettersToConson
     {"NG", BanglaConsonant::NG}
 };
 
+static const std::unordered_map<std::string, BanglaVowel> twoLettersToVowel = {
+    {"oi", BanglaVowel::oi}
+};
+
 BanglaUtf8::~BanglaUtf8 () {
     clear();
 }
@@ -202,6 +206,7 @@ void BanglaUtf8::clear () {
     }
     elems_.clear();
 }
+
 
 // TODO - this routine needs to recgnize two-letter vowels (oi and ou)
 BanglaVowel BanglaUtf8::parse_vowel(std::istream & inputChars) const {
@@ -216,6 +221,106 @@ BanglaVowel BanglaUtf8::parse_vowel(std::istream & inputChars) const {
         std::cout << "Couldn't parse vowel " << c << "\n";
         std::exit(1);
     }
+}
+
+template<typename T>
+bool match_one_letter (char c, T& match);
+template<typename T>
+bool match_two_letters (const std::string & s, T& match);
+
+template <>
+bool match_one_letter<> (char c, BanglaConsonant& match) {
+    auto itr = oneLetterToConsonant.find(c);
+    if (itr != oneLetterToConsonant.end()) {
+        match = itr->second;
+        return true;
+    }
+
+    return false;
+}
+
+template <>
+bool match_one_letter<> (char c, BanglaVowel& match) {
+    auto itr = oneLetterToVowel.find(c);
+    if (itr != oneLetterToVowel.end()) {
+        match = itr->second;
+        return true;
+    }
+
+    return false;
+}
+
+template <>
+bool match_two_letters<> (const std::string & s, BanglaVowel& match) {
+    auto itr = twoLettersToVowel.find(s);
+    if (itr != twoLettersToVowel.end()) {
+        match = itr->second;
+        return true;
+    }
+
+    return false;
+}
+
+template <>
+bool match_two_letters<> (const std::string & s, BanglaConsonant& match) {
+    auto itr = twoLettersToConsonant.find(s);
+    if (itr != twoLettersToConsonant.end()) {
+        match = itr->second;
+        return true;
+    }
+
+    return false;
+}
+
+static bool is_vowel (const char c) {
+    return c == 'a' || c == 'A' ||
+           c == 'i' || c == 'I' ||
+           c == 'u' || c == 'U' ||
+           c == 'e' || c == 'o';
+}
+
+template<typename T>
+std::vector<T> parse_consonant_or_vowel (std::istream& inputChars) {
+    std::vector<T> parsedLetters;
+    std::string letters = "";
+    while (inputChars) {
+        char c;
+        inputChars.get(c);
+        if (isspace(c) || is_vowel(c)) {
+            inputChars.unget();
+            break;
+        }
+
+        letters += c;
+
+        T parsedLetter;
+        if (!match_one_letter(c, parsedLetter)) {
+            continue;
+        }
+
+        if (letters.size() > 1) {
+            if (match_two_letters(letters.substr(letters.size()-2,2), parsedLetter)) {
+                letters.pop_back();
+                letters.pop_back();
+                if (parsedLetters.size() > 0) {
+                    parsedLetters.pop_back();
+                }
+            }
+        }
+
+        parsedLetters.push_back(parsedLetter);
+
+        if (inputChars.eof()) {
+            break;
+        }
+    }
+
+    if (parsedLetters.empty()) {
+        std::cout << "Couldn't parse consonants from " << letters << "\n";
+        std::exit(1);
+    }
+
+    return parsedLetters;
 }
 
 std::vector<BanglaConsonant> BanglaUtf8::parse_consonants(std::istream & inputChars) const {
@@ -286,13 +391,6 @@ BanglaSymbol BanglaUtf8::parse_symbol (std::istream & inputChars) const {
     }
 }
 
-bool BanglaUtf8::is_vowel (const char c) const {
-    return c == 'a' || c == 'A' ||
-           c == 'i' || c == 'I' ||
-           c == 'u' || c == 'U' ||
-           c == 'e' || c == 'o';
-}
-
 bool BanglaUtf8::is_symbol (const char c) const {
     return c == '^' || c == ':' || c == ';';
 }
@@ -316,9 +414,9 @@ void BanglaUtf8::convert (std::istream & inputChars) {
         else if (is_vowel(c)) {
             // Recognize a one-letter or two-letter vowel
 
-            BanglaVowel vowel = parse_vowel(inputChars);
+            std::vector<BanglaVowel> letters = parse_consonant_or_vowel<BanglaVowel>(inputChars);
 
-            BanglaVowelElem * elem = new BanglaVowelElem(vowel);
+            BanglaVowelElem * elem = new BanglaVowelElem(letters[0]);
             elems_.push_back(elem);
         }
         else if (is_symbol(c)) {
@@ -331,7 +429,7 @@ void BanglaUtf8::convert (std::istream & inputChars) {
         }
         else {
             // Recognize a consonant optionally followed by a vowel
-            std::vector<BanglaConsonant> letters = parse_consonants(inputChars);
+            std::vector<BanglaConsonant> letters = parse_consonant_or_vowel<BanglaConsonant>(inputChars);
 
             const char c = inputChars.peek();
             BanglaVowel vowelPrefix = BanglaVowel::a;
