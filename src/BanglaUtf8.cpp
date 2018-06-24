@@ -280,13 +280,26 @@ static bool is_vowel (const char c) {
 }
 
 template<typename T>
+bool is_valid_character (char c);
+
+template <>
+bool is_valid_character<BanglaVowel> (char c) {
+    return !isspace(c) && is_vowel(c);
+}
+
+template <>
+bool is_valid_character<BanglaConsonant> (char c) {
+    return !isspace(c) && !is_vowel(c);
+}
+
+template<typename T>
 std::vector<T> parse_consonant_or_vowel (std::istream& inputChars) {
     std::vector<T> parsedLetters;
     std::string letters = "";
     while (inputChars) {
         char c;
         inputChars.get(c);
-        if (isspace(c) || is_vowel(c)) {
+        if (!is_valid_character<T>(c)) {
             inputChars.unget();
             break;
         }
@@ -316,7 +329,7 @@ std::vector<T> parse_consonant_or_vowel (std::istream& inputChars) {
     }
 
     if (parsedLetters.empty()) {
-        std::cout << "Couldn't parse consonants from " << letters << "\n";
+        std::cout << "Couldn't parse consonants/vowels from " << letters << "\n";
         std::exit(1);
     }
 
