@@ -336,6 +336,7 @@ std::vector<T> parse_consonant_or_vowel (std::istream& inputChars) {
     return parsedLetters;
 }
 
+/*
 std::vector<BanglaConsonant> BanglaUtf8::parse_consonants(std::istream & inputChars) const {
     std::vector<BanglaConsonant> parsedLetters;
     std::string letters = "";
@@ -384,6 +385,7 @@ std::vector<BanglaConsonant> BanglaUtf8::parse_consonants(std::istream & inputCh
 
     return parsedLetters;
 }
+*/
 
 BanglaSymbol BanglaUtf8::parse_symbol (std::istream & inputChars) const {
     char c;
@@ -447,6 +449,7 @@ void BanglaUtf8::convert (std::istream & inputChars) {
             const char c = inputChars.peek();
             BanglaVowel vowelPrefix = BanglaVowel::a;
             if (!inputChars.eof() && is_vowel(c)) {
+                // TODO - need to call parse_consonant_or_vowel here
                 vowelPrefix = parse_vowel(inputChars);
             }
 
