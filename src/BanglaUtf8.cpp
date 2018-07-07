@@ -336,57 +336,6 @@ std::vector<T> parse_consonant_or_vowel (std::istream& inputChars) {
     return parsedLetters;
 }
 
-/*
-std::vector<BanglaConsonant> BanglaUtf8::parse_consonants(std::istream & inputChars) const {
-    std::vector<BanglaConsonant> parsedLetters;
-    std::string letters = "";
-    while (inputChars) {
-        char c;
-        inputChars.get(c);
-        if (isspace(c) || is_vowel(c)) {
-            inputChars.unget();
-            break;
-        }
-
-        letters += c;
-
-        BanglaConsonant parsedLetter;
-        auto itr = oneLetterToConsonant.find(c);
-        if (itr != oneLetterToConsonant.end()) {
-            parsedLetter = itr->second;
-        }
-        else {
-            continue;
-        }
-
-        if (letters.size() > 1) {
-            auto itr = twoLettersToConsonant.find(letters.substr(letters.size()-2,2));
-            if (itr != twoLettersToConsonant.end()) {
-                parsedLetter = itr->second;
-                letters.pop_back();
-                letters.pop_back();
-                if (parsedLetters.size() > 0) {
-                    parsedLetters.pop_back();
-                }
-            }
-        }
-
-        parsedLetters.push_back(parsedLetter);
-
-        if (inputChars.eof()) {
-            break;
-        }
-    }
-
-    if (parsedLetters.empty()) {
-        std::cout << "Couldn't parse consonants from " << letters << "\n";
-        std::exit(1);
-    }
-
-    return parsedLetters;
-}
-*/
-
 BanglaSymbol BanglaUtf8::parse_symbol (std::istream & inputChars) const {
     char c;
     inputChars.get(c);
@@ -449,8 +398,8 @@ void BanglaUtf8::convert (std::istream & inputChars) {
             const char c = inputChars.peek();
             BanglaVowel vowelPrefix = BanglaVowel::a;
             if (!inputChars.eof() && is_vowel(c)) {
-                // TODO - need to call parse_consonant_or_vowel here
-                vowelPrefix = parse_vowel(inputChars);
+                std::vector<BanglaVowel> letters = parse_consonant_or_vowel<BanglaVowel>(inputChars);
+                vowelPrefix = letters[0];
             }
 
             BanglaElem * elem = new BanglaElem(letters, vowelPrefix);

@@ -18,7 +18,7 @@ static bool verify_conversion (const char * text, const char * bangla) {
     }
     else {
         std::cout << "conversion bad (" << outputStream.str()
-                  << ") for " << text << "\n";
+                  << ") for " << text << " (expected " << bangla << ")\n";
         return false;
     }
 }
