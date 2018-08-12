@@ -296,9 +296,8 @@ template<typename T>
 std::vector<T> parse_consonant_or_vowel (std::istream& inputChars) {
     std::vector<T> parsedLetters;
     std::string letters = "";
-    while (inputChars) {
-        char c;
-        inputChars.get(c);
+    char c;
+    while (inputChars.get(c)) {
         if (!is_valid_character<T>(c)) {
             inputChars.unget();
             break;
@@ -322,10 +321,6 @@ std::vector<T> parse_consonant_or_vowel (std::istream& inputChars) {
         }
 
         parsedLetters.push_back(parsedLetter);
-
-        if (inputChars.eof()) {
-            break;
-        }
     }
 
     if (parsedLetters.empty()) {
