@@ -193,7 +193,11 @@ static const std::unordered_map<std::string, BanglaConsonant> twoLettersToConson
 };
 
 static const std::unordered_map<std::string, BanglaVowel> twoLettersToVowel = {
-    {"oi", BanglaVowel::oi}
+    {"aa", BanglaVowel::A},
+    {"ee", BanglaVowel::I},
+    {"oo", BanglaVowel::U},
+    {"oi", BanglaVowel::oi},
+    {"ou", BanglaVowel::ou}
 };
 
 BanglaUtf8::~BanglaUtf8 () {
