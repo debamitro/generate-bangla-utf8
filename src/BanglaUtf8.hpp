@@ -12,7 +12,7 @@ enum class BanglaConsonant {
     T, Th, D, Dh, N,
     t, th, d, dh, n,
     p, f, b, bh, m,
-    y, r, l, sh, Sh, s, h,
+    y, Y, r, l, sh, Sh, s, h,
     rh, Rh
 };
 

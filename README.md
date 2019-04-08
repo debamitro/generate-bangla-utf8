@@ -23,6 +23,7 @@ The input format is still evolving. Right now it is:
 |   ক              |  k or ka   |
 |   খ              |  kh or kha |
 |   গ              |  g or ga   |
+|   য়              |  Y or Ya   |
 
 (To be completed ... )
 
