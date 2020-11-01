@@ -16,30 +16,7 @@ make tests
 
 ## Input format
 
-The input format is still evolving. Right now it is:
-
-| Bangla Consonant |  Key(s)    |
-| ---------------- | ---------- |
-|   ক              |  k or ka   |
-|   খ              |  kh or kha |
-|   গ              |  g or ga   |
-|   য়              |  Y or Ya   |
-
-(To be completed ... )
-
-| Bangla Vowel | Key(s) |
-| ------------ | ------ |
-|     অ        |   a    |
-|     আ        |   A    |
-
-(To be completed ... )
-
-| Bangla Symbol | Key(s) |
-| ------------- | ------ |
-|      ঁ        |    ^   |
-|      ঃ        |    :   |
-|       ং       |    ;   |
-
+The input format is described in doc/input_format.md
 
 ## Examples
 
